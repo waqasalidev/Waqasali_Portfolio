@@ -91,23 +91,35 @@ export function FloatingText({ children, duration = 5, yOffset = 10, className =
 
 // 4. Mouse interaction: hover distortion/warp on character level
 export function InteractiveText({ text, className = "" }) {
+  const startColor = { r: 0, g: 201, b: 228 }; // #00c9e4 (Neon Cyan)
+  const endColor = { r: 247, g: 58, b: 219 };  // #f73adb (Neon Magenta)
+
   return (
     <span className={`inline-block ${className}`}>
-      {text.split("").map((char, index) => (
-        <motion.span
-          key={index}
-          className="inline-block cursor-default"
-          whileHover={{
-            scale: 1.3,
-            color: "var(--neon)",
-            filter: "drop-shadow(0 0 8px var(--neon))",
-            y: -5,
-          }}
-          transition={{ type: "spring", stiffness: 300, damping: 8 }}
-        >
-          {char === " " ? "\u00A0" : char}
-        </motion.span>
-      ))}
+      {text.split("").map((char, index, arr) => {
+        const factor = index / Math.max(arr.length - 1, 1);
+        const r = Math.round(startColor.r + (endColor.r - startColor.r) * factor);
+        const g = Math.round(startColor.g + (endColor.g - startColor.g) * factor);
+        const b = Math.round(startColor.b + (endColor.b - startColor.b) * factor);
+        const charColor = `rgb(${r}, ${g}, ${b})`;
+
+        return (
+          <motion.span
+            key={index}
+            className="inline-block cursor-default select-none font-bold"
+            style={{ color: charColor }}
+            whileHover={{
+              scale: 1.25,
+              color: "#ffffff",
+              filter: `drop-shadow(0 0 10px rgb(${r}, ${g}, ${b}))`,
+              y: -8,
+            }}
+            transition={{ type: "spring", stiffness: 350, damping: 10 }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        );
+      })}
     </span>
   );
 }

@@ -317,7 +317,7 @@ export default function AdminDashboard() {
                     />
                   </div>
                   
-                  <div className="flex gap-1.5 overflow-x-auto w-full md:w-auto py-1">
+                  <div className="flex flex-wrap gap-2 w-full md:w-auto py-1">
                     {["All", "Web", "AI", "Dashboard", "Other"].map((cat) => (
                       <button
                         key={cat}
@@ -325,10 +325,10 @@ export default function AdminDashboard() {
                           setCategoryFilter(cat);
                           setCurrentPage(1);
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                        className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 border cursor-pointer hover:-translate-y-0.5 ${
                           categoryFilter === cat
-                            ? "bg-[var(--neon)] text-primary-foreground font-semibold shadow-neon"
-                            : "glass text-muted-foreground hover:text-foreground"
+                            ? "bg-gradient-to-r from-[var(--neon)] to-[var(--neon-2)] text-primary-foreground font-black shadow-neon border-transparent scale-[1.03]"
+                            : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                         }`}
                       >
                         {cat}
@@ -571,17 +571,23 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono text-muted-foreground mb-1.5">Category</label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm outline-none focus:border-[var(--neon)] focus:ring-1 focus:ring-[var(--neon)]/30 transition-all text-foreground bg-[#0a0f1d]"
-                    >
-                      <option value="Web">Web</option>
-                      <option value="AI">AI</option>
-                      <option value="Dashboard">Dashboard</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    <label className="block text-xs font-mono text-muted-foreground mb-2">Category</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {["Web", "AI", "Dashboard", "Other"].map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setCategory(cat)}
+                          className={`p-3.5 rounded-xl border text-center font-bold text-xs transition-all duration-300 cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                            category === cat
+                              ? "bg-gradient-to-br from-[var(--neon)]/15 to-[var(--neon-2)]/15 border-[var(--neon)] text-foreground shadow-neon"
+                              : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground hover:bg-white/10 hover:border-white/20"
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 

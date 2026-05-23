@@ -1,4 +1,4 @@
-import { Github, Linkedin,} from "lucide-react";
+import { Github, Linkedin, Terminal } from "lucide-react";
 
 export function Footer() {
   return (
@@ -25,6 +25,13 @@ export function Footer() {
       <div className="text-center text-xs text-muted-foreground pb-6">
         © {new Date().getFullYear()} Waqas Ali. All Right Reserved
       </div>
+      <a 
+        href="/admin-dashboard" 
+        className="absolute bottom-6 right-6 opacity-20 hover:opacity-100 hover:scale-110 text-muted-foreground hover:text-[var(--neon)] transition-all duration-300 cursor-pointer"
+        title="Terminal System Access"
+      >
+        <Terminal size={14} className="animate-pulse" />
+      </a>
     </footer>
   );
 }

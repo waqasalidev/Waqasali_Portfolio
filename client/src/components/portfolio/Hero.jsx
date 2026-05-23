@@ -95,9 +95,7 @@ export function Hero() {
 
           <h1 className="mt-6 text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight filter drop-shadow-[0_0_15px_oklch(0.78_0.18_200_/_0.1)]">
             <CinematicText text="Hi, I'm" className="inline mr-3" />
-            <span className="text-gradient">
-              <InteractiveText text="Waqas Ali" />
-            </span>
+            <InteractiveText text="Waqas Ali" />
           </h1>
 
           <motion.div

@@ -307,7 +307,7 @@ export function TechStackUniverse() {
 
   return (
     <Section
-      id="services" // link to navbar section (representing tech and services)
+      id="tech"
       eyebrow="tech universe"
       title={<>The <span className="text-gradient">Tech Stack</span> Universe</>}
       description="An interactive 3D playground showcasing the core technologies I build MERN applications with."
