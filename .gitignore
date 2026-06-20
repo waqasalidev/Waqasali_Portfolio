@@ -1,15 +1,16 @@
 # Dependencies
 **/node_modules/
 
-# Build Files
+# Build
 **/dist/
 **/build/
 
-# Environment Variables
+# Environment Files
+.env
+.env.*
 **/.env
-**/.env.local
-**/.env.development.local
-**/.env.production.local
+**/.env.*
+!.env.example
 
 # Logs
 *.log
@@ -22,9 +23,6 @@ logs/
 # Coverage
 coverage/
 
-# Uploaded Files (optional)
-backend/uploads/
-
 # IDE
 .vscode/
 .idea/
@@ -32,3 +30,6 @@ backend/uploads/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Loveable (if not needed)
+.loveable/
