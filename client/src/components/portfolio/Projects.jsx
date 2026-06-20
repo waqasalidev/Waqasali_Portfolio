@@ -65,6 +65,17 @@ export function Projects() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
+    if (active || lightboxOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [active, lightboxOpen]);
+
+  useEffect(() => {
     const fetchProjects = async () => {
       try {
         const res = await axios.get("/api/projects");
@@ -195,17 +206,17 @@ export function Projects() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
-            className="fixed inset-0 z-[80] bg-background/85 backdrop-blur-md grid place-items-center p-4 overflow-y-auto"
+            className="fixed inset-0 z-[80] bg-background/85 backdrop-blur-md flex items-center justify-center p-4 md:p-6"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl glass-strong rounded-2xl overflow-hidden neon-border my-8"
+              className="w-full max-w-2xl glass-strong rounded-2xl overflow-hidden neon-border flex flex-col max-h-[90vh] md:max-h-[85vh]"
             >
               {/* Image Slider Gallery */}
-              <div className="relative h-64 sm:h-80 bg-black/60 overflow-hidden flex items-center justify-center group/slider">
+              <div className="relative h-64 sm:h-80 bg-black/60 overflow-hidden flex items-center justify-center group/slider flex-shrink-0">
                 {active.images && active.images.length > 0 ? (
                   <>
                     <img
@@ -271,7 +282,7 @@ export function Projects() {
               </div>
 
               {/* Project details content */}
-              <div className="p-6">
+              <div className="p-6 overflow-y-auto flex-grow scrollbar-thin">
                 <h3 className="text-2xl font-bold">{active.title}</h3>
                 <span className="inline-block mt-1 px-3 py-1 rounded-full text-xs font-mono bg-gradient-to-r from-[var(--neon)]/20 to-[var(--neon-2)]/20 text-[var(--neon)]">
                   {active.category}

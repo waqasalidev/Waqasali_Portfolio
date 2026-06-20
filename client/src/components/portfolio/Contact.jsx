@@ -4,6 +4,7 @@ import { Github, Linkedin, Mail, Send, Twitter, ShieldCheck, Loader2, Instagram 
 import { Section } from "./Section";
 import axios from "axios";
 import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
 
 // Custom Popup Component for Success/Error Notifications
 function NotificationPopup({ popup, onClose }) {
@@ -253,25 +254,41 @@ export function Contact() {
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
       const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-      // Only attempt EmailJS if variables are populated
-      if (serviceId && templateId && publicKey) {
-        const templateParams = {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-        };
-        await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      if (!serviceId || !templateId || !publicKey) {
+        console.error("[EmailJS] Missing environment variables in client/.env. Please restart your Vite dev server.");
+        throw new Error("Email service configuration is missing. Make sure VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, and VITE_EMAILJS_PUBLIC_KEY are set in client/.env and restart your dev server.");
       }
+
+      console.log("[DEBUG] EmailJS Config:", { serviceId, templateId, publicKey });
+
+      // Initialize globally (helps resolve "The public key is required" issues)
+      emailjs.init({
+        publicKey: publicKey,
+      });
+
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        from_name: formData.name,
+        from_email: formData.email,
+      };
+
+      // Correct signature for EmailJS SDK v4 (uses options object)
+      await emailjs.send(serviceId, templateId, templateParams, {
+        publicKey: publicKey,
+      });
 
       // Save to local database
       await axios.post("/api/contact", formData);
 
-      // Trigger beautiful success popup
+      // Trigger beautiful success popup and toast notification
       setPopup({
         type: "success",
-        message: "✅ Your message has been submitted successfully!",
+        message: "Your message has been submitted successfully!",
       });
+      toast.success("Your message has been submitted successfully!");
 
       setFormData({
         name: "",
@@ -280,11 +297,18 @@ export function Contact() {
         message: "",
       });
     } catch (error) {
-      console.error(error);
+      console.error("[EmailJS Submission Error Details]:", {
+        status: error?.status,
+        text: error?.text,
+        message: error?.message,
+        rawError: error
+      });
+      const errorMessage = error?.text || error?.message || "Failed to send message. Please try again.";
       setPopup({
         type: "error",
-        message: "❌ Failed to send message. Please try again.",
+        message: `❌ ${errorMessage}`,
       });
+      toast.error(`Submission failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
