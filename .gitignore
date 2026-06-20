@@ -32,4 +32,4 @@ coverage/
 Thumbs.db
 
 # Loveable (if not needed)
-.loveable/
+lovable-config/
