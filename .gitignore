@@ -1,0 +1,34 @@
+# Dependencies
+**/node_modules/
+
+# Build Files
+**/dist/
+**/build/
+
+# Environment Variables
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.production.local
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.eslintcache
+
+# Coverage
+coverage/
+
+# Uploaded Files (optional)
+backend/uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
