@@ -5,54 +5,7 @@ import { Section } from "./Section";
 import axios from "axios";
 import { toast } from "sonner";
 
-const staticProjects = [
-  {
-    _id: "static-1",
-    title: "CKD Knowledge-Based System",
-    description: "A knowledge-based clinical decision support tool built with React + Node, applying medical inference rules over patient labs to suggest CKD stages with explanations.",
-    images: ["/uploads/static-ckd-1.png"],
-    technologies: ["React", "Node", "Expert System"],
-    category: "AI",
-    githubLink: "https://github.com",
-    liveDemoLink: "https://example.com",
-    gradient: "from-cyan-500/30 to-blue-600/30",
-  },
-  {
-    _id: "static-2",
-    title: "AI Medical Dashboard",
-    description: "Interactive dashboard surfacing patient cohorts, vitals and risk scores. Built with React, Recharts and an Express API backed by MongoDB.",
-    images: ["/uploads/static-dash-1.png"],
-    technologies: ["React", "MongoDB", "Recharts"],
-    category: "Dashboard",
-    githubLink: "https://github.com",
-    liveDemoLink: "https://example.com",
-    gradient: "from-fuchsia-500/30 to-pink-600/30",
-  },
-  {
-    _id: "static-3",
-    title: "E-Commerce MERN App",
-    description: "Production-ready MERN e-commerce: JWT auth, Mongo product catalog, Stripe checkout, order workflows, and an admin dashboard for inventory.",
-    images: ["/uploads/static-shop-1.png"],
-    technologies: ["MongoDB", "Express", "React", "Node"],
-    category: "Web",
-    githubLink: "https://github.com",
-    liveDemoLink: "https://example.com",
-    gradient: "from-emerald-500/30 to-teal-600/30",
-  },
-  {
-    _id: "static-4",
-    title: "Portfolio Website",
-    description: "An award-style portfolio (this one!) featuring 3D scenes, scroll-driven animations, glassmorphism UI and a thoughtful design system.",
-    images: [],
-    technologies: ["React", "R3F", "Framer Motion"],
-    category: "Web",
-    githubLink: "https://github.com",
-    liveDemoLink: "https://example.com",
-    gradient: "from-indigo-500/30 to-violet-600/30",
-  },
-];
-
-const filters = ["All", "Web", "AI", "Dashboard"];
+const filters = ["All", "Web", "AI", "Dashboard", "Other"];
 
 export function Projects() {
   const [filter, setFilter] = useState("All");
@@ -79,14 +32,14 @@ export function Projects() {
     const fetchProjects = async () => {
       try {
         const res = await axios.get("/api/projects");
-        if (res.data && res.data.length > 0) {
+        if (res.data && Array.isArray(res.data)) {
           setProjects(res.data);
         } else {
-          setProjects(staticProjects);
+          setProjects([]);
         }
       } catch (err) {
-        console.error("Error fetching projects, loading static placeholders.", err);
-        setProjects(staticProjects);
+        console.error("Error fetching projects.", err);
+        setProjects([]);
       } finally {
         setLoading(false);
       }
@@ -137,6 +90,10 @@ export function Projects() {
       {loading ? (
         <div className="flex items-center justify-center h-48">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--neon)] border-t-transparent"></div>
+        </div>
+      ) : list.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-48 text-muted-foreground font-mono text-sm">
+          <span>// No projects found</span>
         </div>
       ) : (
         <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
