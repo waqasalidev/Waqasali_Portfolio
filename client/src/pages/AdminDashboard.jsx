@@ -58,8 +58,12 @@ export default function AdminDashboard() {
       setMessages(msgRes.data);
     } catch (err) {
       console.error(err);
-      toast.error("Session expired or unauthorized. Logging out.");
-      handleLogout();
+      if (err.response?.status === 401) {
+        toast.error("Session expired or unauthorized. Logging out.");
+        handleLogout();
+      } else {
+        toast.error(`Failed to load data: ${err.response?.data?.message || err.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -177,7 +181,8 @@ export default function AdminDashboard() {
       setModalOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Error saving project configuration.", { id: actionToast });
+      const errMsg = err.response?.data?.message || err.message || "Error saving project configuration.";
+      toast.error(`Error saving project: ${errMsg}`, { id: actionToast });
     } finally {
       setSaving(false);
     }
@@ -192,7 +197,8 @@ export default function AdminDashboard() {
       toast.success("Project removed from database successfully");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to delete project");
+      const errMsg = err.response?.data?.message || err.message || "Failed to delete project";
+      toast.error(`Delete failed: ${errMsg}`);
     }
   };
 
