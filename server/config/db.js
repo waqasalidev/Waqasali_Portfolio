@@ -1,4 +1,14 @@
 import mongoose from "mongoose";
+import dns from "dns";
+
+// Fix Node querySrv issues on some local DNS configurations by setting fallback servers
+if (dns.setServers) {
+  try {
+    dns.setServers(["8.8.8.8", "8.8.4.4"]);
+  } catch (e) {
+    console.warn("Could not set DNS servers:", e.message);
+  }
+}
 
 const connectDB = async () => {
   try {

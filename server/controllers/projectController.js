@@ -1,4 +1,5 @@
 import Project from "../models/Project.js";
+import { deleteImageFromCloudinary } from "../config/cloudinary.js";
 
 // @desc    Get all projects
 // @route   GET /api/projects
@@ -62,6 +63,17 @@ export const updateProject = async (req, res) => {
     const project = await Project.findById(req.params.id);
 
     if (project) {
+      // If a new list of images is provided, delete any old images that are no longer present
+      if (images) {
+        const oldImages = project.images || [];
+        const newImages = images || [];
+        const imagesToDelete = oldImages.filter((img) => !newImages.includes(img));
+        
+        for (const imgUrl of imagesToDelete) {
+          await deleteImageFromCloudinary(imgUrl);
+        }
+      }
+
       project.title = title || project.title;
       project.description = description || project.description;
       project.images = images || project.images;
@@ -90,6 +102,13 @@ export const deleteProject = async (req, res) => {
     const project = await Project.findById(req.params.id);
 
     if (project) {
+      // Delete project images from Cloudinary before removing the project record
+      if (project.images && project.images.length > 0) {
+        for (const imgUrl of project.images) {
+          await deleteImageFromCloudinary(imgUrl);
+        }
+      }
+
       await Project.deleteOne({ _id: req.params.id });
       res.json({ message: "Project removed successfully" });
     } else {
