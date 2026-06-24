@@ -1,39 +1,22 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 
-// Ensure uploads folder exists
-const uploadDir = "./uploads";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
+// Use memory storage — files are held as buffers in RAM and uploaded
+// directly to Cloudinary without ever touching the disk.
+// This is critical for cloud deployments (e.g. Render) whose filesystems
+// are ephemeral and wiped on every restart or redeploy.
+const storage = multer.memoryStorage();
 
 function checkFileType(file, cb) {
-  const filetypes = /jpg|jpeg|png|webp|gif/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (extname && mimetype) {
+  const allowedMimes = /^image\/(jpeg|jpg|png|webp|gif)$/;
+  if (allowedMimes.test(file.mimetype)) {
     return cb(null, true);
-  } else {
-    cb(new Error("Images only (jpg, jpeg, png, webp, gif)!"));
   }
+  cb(new Error("Images only (jpg, jpeg, png, webp, gif)!"));
 }
 
 const upload = multer({
   storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max per file
   fileFilter(req, file, cb) {
     checkFileType(file, cb);
   },

@@ -11,7 +11,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 
-// Load env variables
+// Load env variables first — must happen before any other import uses process.env
 dotenv.config();
 
 // Connect to Database
@@ -19,33 +19,53 @@ connectDB();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Set up ESM path helpers for static folder sharing
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve uploaded images statically
+// ─── CORS ──────────────────────────────────────────────────────────────────
+// Allow requests from the Vercel frontend and localhost dev server
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS: origin "${origin}" not allowed`));
+    },
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+
+// ─── Static uploads fallback (localhost only) ───────────────────────────────
+// In production ALL images are served from Cloudinary CDN URLs stored in
+// MongoDB — this static route is only used in local development when you
+// may still have leftover files in the uploads/ folder.
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Mount API routes
+// ─── API routes ─────────────────────────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Root route
+// Root health-check
 app.get("/", (req, res) => {
-  res.send("Portfolio API is running...");
+  res.send("Portfolio API is running ✅");
 });
 
-// Global Error Handler Middleware
+// ─── Global error handler ───────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode);
-  res.json({
+  res.status(statusCode).json({
     message: err.message,
     stack: process.env.NODE_ENV === "production" ? null : err.stack,
   });
@@ -54,5 +74,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+  console.log(
+    `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`
+  );
 });

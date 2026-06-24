@@ -33,3 +33,6 @@ Thumbs.db
 
 # Loveable (if not needed)
 project-config/
+
+# Local uploads (should always use Cloudinary in production)
+server/uploads/
