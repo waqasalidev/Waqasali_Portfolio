@@ -1,6 +1,3 @@
-/**
- * Tries multiple cloud name variations and reports which one works.
- */
 import dotenv from "dotenv";
 dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
@@ -8,16 +5,23 @@ import { v2 as cloudinary } from "cloudinary";
 const API_KEY    = process.env.CLOUDINARY_API_KEY;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
-// Try all reasonable variations of the cloud name
 const candidates = [
-  "root",
-  "Root",
-  "ROOT",
-  "waqasali",
-  "waqas",
-  "portfolio",
-  "waqasaliiii",
-  "iwaqasaliii",
+  "iwaqasalii",
+  "waqasalii",
+  "waqasaliii",
+  "iwaqas",
+  "waqas-ali",
+  "waqasali123",
+  "iwaqasali",
+  "waqasalidev",
+  "waqas-dev",
+  "waqas-portfolio",
+  "iwaqasaliii-db-user",
+  "waqasalidev-portfolio",
+  "portfolio-waqas",
+  "sonu-sheikh",
+  "sonu",
+  "sheikh"
 ];
 
 for (const name of candidates) {
