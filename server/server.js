@@ -22,26 +22,8 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ─── CORS ──────────────────────────────────────────────────────────────────
-// Allow requests from the Vercel frontend and localhost dev server
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  "http://localhost:3000",
-  "http://localhost:5173",
-].filter(Boolean);
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      callback(new Error(`CORS: origin "${origin}" not allowed`));
-    },
-    credentials: true,
-  })
-);
+// Middlewares
+app.use(cors());
 
 app.use(express.json());
 
