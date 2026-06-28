@@ -9,7 +9,7 @@
       "destination": "https://waqasali-portfolio.onrender.com/uploads/:path*"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|api/|uploads/|favicon\\.png|favicon\\.svg).*)",
       "destination": "/index.html"
     }
   ]
