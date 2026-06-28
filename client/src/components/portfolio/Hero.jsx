@@ -140,7 +140,7 @@ export function Hero() {
               Hire Me
             </a>
             <a
-              href="/assets/resume/Waqas%20Ali%20CV.pdf"
+              href="/assets/resume/Waqas_Ali_CV.pdf"
               download="Waqas Ali CV.pdf"
               className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
