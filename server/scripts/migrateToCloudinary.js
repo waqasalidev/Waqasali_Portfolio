@@ -23,7 +23,7 @@ import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
 
 // Use Google DNS to avoid SRV resolution failures on some local setups
-if (dns.setServers) {
+if (process.env.NODE_ENV !== "production" && dns.setServers) {
   try {
     dns.setServers(["8.8.8.8", "8.8.4.4"]);
   } catch (e) {

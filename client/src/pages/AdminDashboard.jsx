@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [projects, setProjects] = useState([]);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dbError, setDbError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
@@ -50,6 +51,7 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     setLoading(true);
+    setDbError(false);
     try {
       const projRes = await axios.get("/api/projects");
       setProjects(projRes.data);
@@ -61,6 +63,9 @@ export default function AdminDashboard() {
       if (err.response?.status === 401) {
         toast.error("Session expired or unauthorized. Logging out.");
         handleLogout();
+      } else if (err.response?.status === 503) {
+        setDbError(true);
+        toast.error("Database connection unavailable.");
       } else {
         toast.error(`Failed to load data: ${err.response?.data?.message || err.message}`);
       }
@@ -290,6 +295,24 @@ export default function AdminDashboard() {
         {loading ? (
           <div className="flex-grow flex items-center justify-center py-24">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--neon)] border-t-transparent"></div>
+          </div>
+        ) : dbError ? (
+          <div className="flex-grow flex flex-col items-center justify-center py-24 gap-6 text-center">
+            <div className="glass rounded-2xl neon-border p-8 max-w-md w-full">
+              <div className="text-red-400 font-mono text-xs mb-2">// ERROR 503</div>
+              <h3 className="text-lg font-bold mb-2">Database Connection Unavailable</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                The backend cannot reach MongoDB. Projects have <strong>not</strong> been deleted — the
+                database connection is temporarily down. Check the Render deployment logs and MongoDB
+                Atlas network access settings.
+              </p>
+              <button
+                onClick={fetchData}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[var(--neon)] to-[var(--neon-2)] text-primary-foreground font-medium text-sm shadow-neon transition-transform hover:scale-[1.02] cursor-pointer"
+              >
+                Retry Connection
+              </button>
+            </div>
           </div>
         ) : (
           <div className="flex-grow">

@@ -17,7 +17,7 @@ import dns from "dns";
 import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
 
-if (dns.setServers) {
+if (process.env.NODE_ENV !== "production" && dns.setServers) {
   try { dns.setServers(["8.8.8.8", "8.8.4.4"]); } catch (_) {}
 }
 

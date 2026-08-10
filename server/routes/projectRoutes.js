@@ -7,8 +7,12 @@ import {
   deleteProject,
 } from "../controllers/projectController.js";
 import protect from "../middleware/authMiddleware.js";
+import dbCheck from "../middleware/dbCheckMiddleware.js";
 
 const router = express.Router();
+
+// Reject all requests immediately when DB is not connected
+router.use(dbCheck);
 
 router.route("/")
   .get(getProjects)

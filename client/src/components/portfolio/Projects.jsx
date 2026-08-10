@@ -13,9 +13,30 @@ export function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState(null);
+
   // Gallery slider state inside detail modal
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const fetchProjects = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get("/api/projects");
+      if (res.data && Array.isArray(res.data)) {
+        setProjects(res.data);
+      } else {
+        setProjects([]);
+      }
+    } catch (err) {
+      console.error("Error fetching projects.", err);
+      setError("Unable to load projects. The server may be temporarily unavailable.");
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (active || lightboxOpen) {
@@ -29,21 +50,6 @@ export function Projects() {
   }, [active, lightboxOpen]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await axios.get("/api/projects");
-        if (res.data && Array.isArray(res.data)) {
-          setProjects(res.data);
-        } else {
-          setProjects([]);
-        }
-      } catch (err) {
-        console.error("Error fetching projects.", err);
-        setProjects([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProjects();
   }, []);
 
@@ -91,9 +97,20 @@ export function Projects() {
         <div className="flex items-center justify-center h-48">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--neon)] border-t-transparent"></div>
         </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center h-48 text-muted-foreground font-mono text-sm gap-4 text-center max-w-md mx-auto glass p-6 rounded-2xl neon-border">
+          <span className="text-red-400 font-bold">// {error}</span>
+          <p className="text-xs text-muted-foreground">The backend server might be cold-starting. Please wait a moment and try again.</p>
+          <button 
+            onClick={fetchProjects}
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-[var(--neon)] to-[var(--neon-2)] text-primary-foreground font-medium text-xs shadow-neon transition-transform active:scale-95 cursor-pointer"
+          >
+            Retry Connection
+          </button>
+        </div>
       ) : list.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-48 text-muted-foreground font-mono text-sm">
-          <span>// No projects found</span>
+          <span>// No projects available yet.</span>
         </div>
       ) : (
         <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

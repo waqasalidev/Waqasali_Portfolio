@@ -16,13 +16,21 @@ export const loginAdmin = async (req, res) => {
       return res.status(400).json({ message: "Please provide a valid email address" });
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
-    const adminPass = process.env.ADMIN_PASSWORD || "adminpassword123";
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPass = process.env.ADMIN_PASSWORD;
+    const jwtSecret = process.env.JWT_SECRET;
+
+    if (!adminEmail || !adminPass || !jwtSecret) {
+      console.error("CRITICAL CONFIGURATION ERROR: Missing ADMIN_EMAIL, ADMIN_PASSWORD, or JWT_SECRET env variables.");
+      return res.status(500).json({ 
+        message: "Server configuration error: Required environment variables (admin credentials or JWT secret) are not set on the server." 
+      });
+    }
 
     if (email.toLowerCase() === adminEmail.toLowerCase() && password === adminPass) {
       const token = jwt.sign(
         { email },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: "30d" }
       );
 

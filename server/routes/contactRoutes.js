@@ -5,8 +5,12 @@ import {
   deleteContactMessage,
 } from "../controllers/contactController.js";
 import protect from "../middleware/authMiddleware.js";
+import dbCheck from "../middleware/dbCheckMiddleware.js";
 
 const router = express.Router();
+
+// Reject all requests immediately when DB is not connected
+router.use(dbCheck);
 
 router.route("/")
   .post(submitContactMessage)
