@@ -142,9 +142,9 @@ My goal is to build digital products that combine **strong engineering, modern d
 
 ## 📫 Connect With Me
 
-* LinkedIn: `<YOUR_LINKEDIN_URL>`
-* GitHub: `<YOUR_GITHUB_URL>`
-* Portfolio: `<YOUR_PORTFOLIO_URL>`
+* LinkedIn: `https://www.linkedin.com/in/waqas-aliii/`
+* GitHub: `https://github.com/waqasalidev`
+* Portfolio: `https://waqasalii-portfolio.vercel.app/`
 
 ---
 
